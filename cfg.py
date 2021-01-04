@@ -19,8 +19,10 @@ FONT_PATH = os.path.join(os.getcwd(), 'resources/font/font.TTF')
 '''最高分记录的路径'''
 HIGHEST_SCORE_RECORD_FILEPATH = 'highest.rec'
 '''游戏屏幕大小'''
-SCREENSIZE = (800, 600)
+SCREENSIZE = (1920, 1080)
 '''背景颜色'''
-BACKGROUND_COLOR = (0, 160, 233)
+BACKGROUND_COLOR = (255, 255, 255)
+''' Tittle '''
+TITTLE = "nHero"
 '''fps'''
-FPS = 30
+FPS = 60

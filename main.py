@@ -7,13 +7,14 @@ from modules.hero import Hero
 from modules.food import Food
 from modules.endinterface import showEndGameInterface
 
-
 '''游戏初始化'''
+
+
 def initGame():
     # 初始化pygame, 设置展示窗口
     pygame.init()
     screen = pygame.display.set_mode(cfg.SCREENSIZE)
-    pygame.display.set_caption('catch coins —— 微信公众号: Charles的皮卡丘')
+    pygame.display.set_caption(cfg.TITTLE)
     # 加载必要的游戏素材
     game_images = {}
     for key, value in cfg.IMAGE_PATHS.items():
@@ -32,6 +33,8 @@ def initGame():
 
 
 '''主函数'''
+
+
 def main():
     # 初始化
     screen, game_images, game_sounds = initGame()
@@ -48,18 +51,22 @@ def main():
     generate_food_count = 0
     # 当前分数/历史最高分
     score = 0
-    highest_score = 0 if not os.path.exists(cfg.HIGHEST_SCORE_RECORD_FILEPATH) else int(open(cfg.HIGHEST_SCORE_RECORD_FILEPATH).read())
+    highest_score = 0 if not os.path.exists(cfg.HIGHEST_SCORE_RECORD_FILEPATH) else int(
+        open(cfg.HIGHEST_SCORE_RECORD_FILEPATH).read())
     # 游戏主循环
     clock = pygame.time.Clock()
     while True:
         # --填充背景
         screen.fill(0)
         screen.blit(game_images['background'], (0, 0))
+
         # --倒计时信息
-        countdown_text = 'Count down: ' + str((90000 - pygame.time.get_ticks()) // 60000) + ":" + str((90000 - pygame.time.get_ticks()) // 1000 % 60).zfill(2)
+        countdown_text = 'Count down: ' + str(
+            (90000 - pygame.time.get_ticks()) // 60000) + ":" + str(
+            (90000 - pygame.time.get_ticks()) // 1000 % 60).zfill(2)
         countdown_text = font.render(countdown_text, True, (0, 0, 0))
         countdown_rect = countdown_text.get_rect()
-        countdown_rect.topright = [cfg.SCREENSIZE[0]-30, 5]
+        countdown_rect.topright = [cfg.SCREENSIZE[0] - 30, 5]
         screen.blit(countdown_text, countdown_rect)
         # --按键检测
         for event in pygame.event.get():
@@ -71,12 +78,23 @@ def main():
             hero.move(cfg.SCREENSIZE, 'left')
         if key_pressed[pygame.K_d] or key_pressed[pygame.K_RIGHT]:
             hero.move(cfg.SCREENSIZE, 'right')
+        if key_pressed[pygame.K_d] or key_pressed[pygame.K_UP]:
+            init_speed = 5
+            hero_speed = init_speed
+            hero_gravity = 1
+            while True:
+                hero_speed -= hero_gravity
+                hero.jump(cfg.SCREENSIZE,'up')
+                if hero_speed <=0:
+                    hero_gravity = 0 - hero_gravity
+                if hero_speed >= init_speed:
+                    break
         # --随机生成食物
         generate_food_count += 1
         if generate_food_count > generate_food_freq:
             generate_food_freq = random.randint(10, 20)
             generate_food_count = 0
-            food = Food(game_images, random.choice(['gold',] * 10 + ['apple']), cfg.SCREENSIZE)
+            food = Food(game_images, random.choice(['gold', ] * 10 + ['apple']), cfg.SCREENSIZE)
             food_sprites_group.add(food)
         # --更新食物
         for food in food_sprites_group:

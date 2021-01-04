@@ -15,6 +15,7 @@ class Hero(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.images_right = images[:5]
         self.images_left = images[5:]
+        self.images_jump = images[6]
         self.images = self.images_right.copy()
         self.image = self.images[0]
         self.mask = pygame.mask.from_surface(self.image)
@@ -22,6 +23,7 @@ class Hero(pygame.sprite.Sprite):
         self.rect.left, self.rect.top = position
         self.diretion = 'right'
         self.speed = 8
+        self.gravity = 1
         self.switch_frame_count = 0
         self.switch_frame_freq = 1
         self.frame_index = 0
@@ -42,6 +44,23 @@ class Hero(pygame.sprite.Sprite):
             self.rect.left = max(self.rect.left-self.speed, 0)
         else:
             self.rect.left = min(self.rect.left+self.speed, screensize[0])
+    '''jump'''
+    def jump(self, screensize, direction):
+        assert direction in ['up', 'down']
+        if direction != self.diretion:
+            self.images = self.images_left.copy() if direction == 'left' else self.images_right.copy()
+            self.image = self.images[0]
+            self.diretion = direction
+            self.switch_frame_count = 0
+        self.switch_frame_count += 1
+        if self.switch_frame_count % self.switch_frame_freq == 0:
+            self.switch_frame_count = 0
+            self.frame_index = (self.frame_index + 1) % len(self.images)
+            self.image = self.images[self.frame_index]
+        if direction == 'up':
+            self.rect.top = max(self.rect.top-self.speed, 0)
+        else:
+            self.rect.top = min(self.rect.top+self.speed, screensize[0])
     '''画到屏幕上'''
     def draw(self, screen):
         screen.blit(self.image, self.rect)
